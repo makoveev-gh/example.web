@@ -11,8 +11,8 @@ export async function getCountObjects(){
     }
 }
 
-export async function getObjects(){
-    const url = `http://localhost:5001/api/v1/table?start=0&count=50`;
+export async function getObjects(startIndex, countObjects){
+    const url = `http://localhost:5001/api/v1/table?start=${startIndex}&count=${countObjects}`;
     const response = await axios.get(url);
     if (response.status === 200) {
         return response.data;

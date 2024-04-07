@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { getObjects, getCountObjects } from './TableClient/Client';
 import Table from './components/Table';
-import './App.css';
 import Pagination from './components/Pagination';
+import './App.css';
 
 function App() {
   const [data, setData] = useState([]);
@@ -15,26 +15,32 @@ function App() {
     const getCount = async () => {
       setLoading(true);
       const count = await getCountObjects();
-      const objects = await getObjects();
+      const objects = await getObjects((currentPage - 1) * perPage, perPage);
+      console.log(objects);
       setData(objects);
       setCount(count);
       setLoading(false);
     };
     getCount()
-  }, []);
-
-
-  const lastObjectIndex = currentPage * perPage;
-  const firstObjectIndex = lastObjectIndex - perPage;
-  const currentObject = data.slice(firstObjectIndex, lastObjectIndex);
+  }, [currentPage, perPage]);
 
   const paginate = pageNumber => setCurrentPage(pageNumber);
 
+  const handleChangePerPage = (newPerPage) => {
+    setPerPage(newPerPage);
+    setCurrentPage(1);
+  };
+
   return (
     <div className="container">
-      <h1 className='text'>Hello</h1>
-      <Table data={currentObject} loading={loading} />
-      <Pagination perPage={perPage} objectCount={count} paginate={paginate}/>
+      <h1 className='text'>Data</h1>
+      <Table data={data} loading={loading} />
+      <div className="pagination-buttons">
+        <button onClick={() => handleChangePerPage(3)}>Show 3 items per page</button>
+        <button onClick={() => handleChangePerPage(5)}>Show 5 items per page</button>
+        <button onClick={() => handleChangePerPage(10)}>Show 10 items per page</button>
+      </div>
+      <Pagination perPage={perPage} objectCount={count} paginate={paginate} currentPage={currentPage}/>
     </div>
   );
 }
